@@ -27,20 +27,11 @@ spec:
   gateways:
   - istio-gateway
   http:
-  - name: primary
-    match:
-      - uri:
-          prefix: /demo
-    rewrite:
-      uri: /
-    route:
-      - destination:
-          host: demo
-          port:
-            number: 8080
-        weight: 100
-      - destination:
-          host: demo-canary
-          port:
-            number: 8080
-        weight: 0
+    - name: primary
+      route:
+        - destination:
+            host: demo
+          weight: 100
+        - destination:
+            host: demo-canary
+          weight: 0
