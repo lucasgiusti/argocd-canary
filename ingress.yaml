@@ -31,6 +31,8 @@ spec:
       match:
         - url:
             prefix: /demo
+        rewrite:
+          uri: /
       route:
         - destination:
             host: demo
