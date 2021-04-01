@@ -41,8 +41,6 @@ spec:
       labels:
         app: demo
         version: blue
-      annotations:
-        sidecar.istio.io/inject: "true"
     spec:
       containers:
       - name: demo
@@ -65,10 +63,11 @@ metadata:
   name: demo
 spec:
   ports:
-  - name: http
-    port: 8080
+  - port: 80
+    targetPort: 8080
   selector:
     app: demo
+  type: ClusterIP
 ---
 apiVersion: v1
 kind: Service
@@ -76,10 +75,11 @@ metadata:
   name: demo-canary
 spec:
   ports:
-  - name: http
-    port: 8080
+  - port: 80
+    targetPort: 8080
   selector:
     app: demo
+  type: ClusterIP
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
