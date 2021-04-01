@@ -31,7 +31,11 @@ spec:
       route:
         - destination:
             host: demo
+            port:
+              number: 8080
           weight: 100
         - destination:
             host: demo-canary
+            port:
+              number: 8080
           weight: 0
