@@ -21,7 +21,7 @@ spec:
           duration: "20s"
       - setWeight: 50
       - pause:
-          duration: "20"
+          duration: "20s"
       canaryService: recommendation-canary
       stableService: recommendation-stable
       trafficRouting:
@@ -40,7 +40,7 @@ spec:
   selector:
     matchLabels:
       app: recommendation
-      version: v1
+      version: v2
   template:
     metadata:
       labels:
@@ -53,7 +53,7 @@ spec:
         - name: JAVA_OPTIONS
           value: -Xms15m -Xmx15m -Xmn15m
         name: recommendation
-        image: quay.io/rhdevelopers/istio-tutorial-recommendation:v1
+        image: quay.io/rhdevelopers/istio-tutorial-recommendation:v2
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
