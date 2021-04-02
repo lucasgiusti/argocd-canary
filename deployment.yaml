@@ -40,10 +40,12 @@ spec:
   selector:
     matchLabels:
       app: recommendation
+      version: v2
   template:
     metadata:
       labels:
         app: recommendation
+        version: v2
       annotations:
         sidecar.istio.io/inject: "true"
     spec:
@@ -52,7 +54,7 @@ spec:
         - name: JAVA_OPTIONS
           value: -Xms15m -Xmx15m -Xmn15m
         name: recommendation
-        image: quay.io/rhdevelopers/istio-tutorial-recommendation:v1
+        image: quay.io/rhdevelopers/istio-tutorial-recommendation:v2
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
