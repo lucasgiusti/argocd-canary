@@ -40,7 +40,6 @@ spec:
   selector:
     matchLabels:
       app: recommendation
-      version: v1
   template:
     metadata:
       labels:
@@ -139,6 +138,8 @@ spec:
   - name: canary   # referenced in canary.trafficRouting.istio.destinationRule.canarySubsetName
     labels:        # labels will be injected with canary rollouts-pod-template-hash value
       app: recommendation
+      version: canary
   - name: stable   # referenced in canary.trafficRouting.istio.destinationRule.stableSubsetName
     labels:        # labels will be injected with canary rollouts-pod-template-hash value
       app: recommendation
+      version: stable
