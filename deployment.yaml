@@ -40,7 +40,6 @@ spec:
   selector:
     matchLabels:
       app: recommendation
-      version: v1
   template:
     metadata:
       labels:
