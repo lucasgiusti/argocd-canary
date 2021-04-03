@@ -7,6 +7,16 @@ metadata:
 spec:
   strategy:
     canary:
+      trafficRouting:
+        istio:
+          virtualService: 
+            name: recommendation-vsvc
+            routes:
+            - primary # At least one route is required
+          destinationRule:
+            name: recommendation-destrule
+            canarySubsetName: canary
+            stableSubsetName: stable          
       analysis:
         templates:
         - templateName: success-rate
@@ -21,16 +31,6 @@ spec:
       - setWeight: 50
       - pause:
           duration: "20s"
-      trafficRouting:
-        istio:
-          virtualService: 
-            name: recommendation-vsvc
-            routes:
-            - primary # At least one route is required
-          destinationRule:
-            name: recommendation-destrule
-            canarySubsetName: canary
-            stableSubsetName: stable          
   replicas: 4
   revisionHistoryLimit: 2
   selector:
