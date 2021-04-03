@@ -52,7 +52,7 @@ spec:
         - name: JAVA_OPTIONS
           value: -Xms15m -Xmx15m -Xmn15m
         name: recommendation
-        image: quay.io/rhdevelopers/istio-tutorial-recommendation:v2
+        image: quay.io/rhdevelopers/istio-tutorial-recommendation:v1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
@@ -86,7 +86,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: recommendation
+  name: recommendation-stable
 spec:
   ports:
   - name: http
@@ -94,17 +94,17 @@ spec:
   selector:
     app: recommendation
 ---
-#apiVersion: v1
-#kind: Service
-#metadata:
-#  name: recommendation-canary
-#spec:
-#  ports:
-#  - name: http
-#    port: 8080
-#  selector:
-#    app: recommendation
-#---
+apiVersion: v1
+kind: Service
+metadata:
+  name: recommendation-canary
+spec:
+  ports:
+  - name: http
+    port: 8080
+  selector:
+    app: recommendation
+---
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
@@ -138,8 +138,6 @@ spec:
   - name: canary   # referenced in canary.trafficRouting.istio.destinationRule.canarySubsetName
     labels:        # labels will be injected with canary rollouts-pod-template-hash value
       app: recommendation
-      version: canary
   - name: stable   # referenced in canary.trafficRouting.istio.destinationRule.stableSubsetName
     labels:        # labels will be injected with canary rollouts-pod-template-hash value
       app: recommendation
-      version: stable
