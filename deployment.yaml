@@ -7,22 +7,6 @@ metadata:
 spec:
   strategy:
     canary:
-      analysis:
-        templates:
-        - templateName: success-rate
-        startingStep: 2
-        args:
-        - name: service-name
-          value: recommendation.default.svc.cluster.local
-      steps:
-      - setWeight: 20
-      - pause:
-          duration: "20s"
-      - setWeight: 50
-      - pause:
-          duration: "20s"
-      canaryService: recommendation-canary
-      stableService: recommendation
       trafficRouting:
         istio:
           virtualService: 
@@ -32,7 +16,14 @@ spec:
           destinationRule:
             name: recommendation-destrule
             canarySubsetName: canary
-            stableSubsetName: stable          
+            stableSubsetName: stable
+      steps:
+      - setWeight: 20
+      - pause:
+          duration: "20s"
+      - setWeight: 50
+      - pause:
+          duration: "20s"
   replicas: 4
   revisionHistoryLimit: 2
   selector:
@@ -85,24 +76,25 @@ metadata:
   name: recommendation
 spec:
   ports:
-  - name: http
-    port: 8080
+  - port: 8080
+    targetPort: http  
+    protocol: TCP
   selector:
     app: recommendation
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: recommendation-canary
-  labels:
-    version: canary
-spec:
-  ports:
-  - name: http
-    port: 8080
-  selector:
-    app: recommendation
----
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: recommendation-canary
+#  labels:
+#    version: canary
+#spec:
+#  ports:
+#  - name: http
+#    port: 8080
+#  selector:
+#    app: recommendation
+#---
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
