@@ -8,33 +8,23 @@ metadata:
 spec:
   strategy:
     canary:
-      analysis:
-        templates:
-        - templateName: success-rate
-        startingStep: 2
-        args:
-        - name: service-name
-          value: recommendation.default.svc.cluster.local
+      trafficRouting:
+        istio:
+          virtualService: 
+            name: recommendation
+            routes:
+            - primary # At least one route is required
+          destinationRule:
+            name: recommendation
+            canarySubsetName: canary
+            stableSubsetName: stable
       steps:
       - setWeight: 20
       - pause:
           duration: "20s"
       - setWeight: 50
       - pause:
-          duration: "20s"
-      canaryService: recommendation-canary
-      stableService: recommendation-stable
-      trafficRouting:
-        istio:
-          virtualService: 
-            name: recommendation-vsvc
-            routes:
-            - primary # At least one route is required
-          destinationRule:
-            name: recommendation-destrule
-            canarySubsetName: canary
-            stableSubsetName: stable
-          
+          duration: "20s"    
   replicas: 4
   revisionHistoryLimit: 2
   selector:
@@ -44,8 +34,6 @@ spec:
     metadata:
       labels:
         app: recommendation
-      annotations:
-        sidecar.istio.io/inject: "true"
     spec:
       containers:
       - env:
@@ -86,52 +74,31 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: recommendation-stable
+  name: recommendation
 spec:
   ports:
-  - name: http
-    port: 8080
+  - port: 8080
+    targetPort: http
+    protocol: TCP
+    name: http
   selector:
     app: recommendation
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: recommendation-canary
-spec:
-  ports:
-  - name: http
-    port: 8080
-  selector:
-    app: recommendation
----
-apiVersion: argoproj.io/v1alpha1
-kind: AnalysisTemplate
-metadata:
-  name: success-rate
-spec:
-  args:
-  - name: service-name
-  metrics:
-  - name: success-rate
-    successCondition: result[0] >= 0.95
-    interval: 30s
-    failureLimit: 1
-    provider:
-      prometheus:
-        address: http://prometheus.istio-system.svc.cluster.local:9090
-        query: |
-          sum(irate(
-            istio_requests_total{reporter="source",destination_service=~"{{args.service-name}}",response_code!~"5.*"}[1m]
-          )) / 
-          sum(irate(
-            istio_requests_total{reporter="source",destination_service=~"{{args.service-name}}"}[1m]
-          ))
----
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: recommendation-canary
+#spec:
+#  ports:
+#  - name: http
+#    port: 8080
+#  selector:
+#    app: recommendation
+#---
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
-  name: recommendation-destrule
+  name: recommendation
 spec:
   host: recommendation
   subsets:
