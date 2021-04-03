@@ -22,6 +22,8 @@ spec:
       - setWeight: 50
       - pause:
           duration: "20s"
+#      canaryService: recommendation-canary
+#      stableService: recommendation-stable
       trafficRouting:
         istio:
           virtualService: 
@@ -31,8 +33,7 @@ spec:
           destinationRule:
             name: recommendation-destrule
             canarySubsetName: canary
-            stableSubsetName: stable
-          
+            stableSubsetName: stable          
   replicas: 4
   revisionHistoryLimit: 2
   selector:
@@ -50,7 +51,7 @@ spec:
         - name: JAVA_OPTIONS
           value: -Xms15m -Xmx15m -Xmn15m
         name: recommendation
-        image: quay.io/rhdevelopers/istio-tutorial-recommendation:v2
+        image: quay.io/rhdevelopers/istio-tutorial-recommendation:v1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
