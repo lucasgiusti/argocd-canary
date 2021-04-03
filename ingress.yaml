@@ -30,6 +30,6 @@ spec:
         subset: stable
       weight: 100
     - destination:
-        host: recommendation-canary
+        host: recommendation
         subset: canary
       weight: 0
