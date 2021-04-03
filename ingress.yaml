@@ -27,9 +27,7 @@ spec:
     route:
     - destination:
         host: recommendation
-        subset: stable
       weight: 100
     - destination:
-        host: recommendation
-        subset: canary
+        host: recommendation-canary
       weight: 0

@@ -8,16 +8,14 @@ metadata:
 spec:
   strategy:
     canary:
+      canaryService: recommendation-canary  # required
+      stableService: recommendation  # required
       trafficRouting:
         istio:
           virtualService: 
             name: recommendation
             routes:
             - primary # At least one route is required
-          destinationRule:
-            name: recommendation
-            canarySubsetName: canary
-            stableSubsetName: stable
       steps:
       - setWeight: 20
       - pause:
@@ -84,27 +82,29 @@ spec:
   selector:
     app: recommendation
 ---
-#apiVersion: v1
-#kind: Service
-#metadata:
-#  name: recommendation-canary
-#spec:
-#  ports:
-#  - name: http
-#    port: 8080
-#  selector:
-#    app: recommendation
-#---
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
+apiVersion: v1
+kind: Service
 metadata:
-  name: recommendation
+  name: recommendation-canary
 spec:
-  host: recommendation
-  subsets:
-  - name: canary   # referenced in canary.trafficRouting.istio.destinationRule.canarySubsetName
-    labels:        # labels will be injected with canary rollouts-pod-template-hash value
-      app: recommendation
-  - name: stable   # referenced in canary.trafficRouting.istio.destinationRule.stableSubsetName
-    labels:        # labels will be injected with canary rollouts-pod-template-hash value
-      app: recommendation
+  ports:
+  - port: 8080
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app: recommendation
+#---
+#apiVersion: networking.istio.io/v1alpha3
+#kind: DestinationRule
+#metadata:
+#  name: recommendation
+#spec:
+#  host: recommendation
+#  subsets:
+#  - name: canary   # referenced in canary.trafficRouting.istio.destinationRule.canarySubsetName
+#    labels:        # labels will be injected with canary rollouts-pod-template-hash value
+#      app: recommendation
+#  - name: stable   # referenced in canary.trafficRouting.istio.destinationRule.stableSubsetName
+#    labels:        # labels will be injected with canary rollouts-pod-template-hash value
+#      app: recommendation
