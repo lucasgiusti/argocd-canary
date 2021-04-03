@@ -18,7 +18,7 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: recommendation-vsvc
+  name: recommendation
 spec:
   hosts:
   - recommendation

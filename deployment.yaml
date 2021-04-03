@@ -21,8 +21,8 @@ spec:
       - setWeight: 50
       - pause:
           duration: "20s"
-      canaryService: recommendation-canary
-      stableService: recommendation
+      #canaryService: recommendation-canary
+      #stableService: recommendation
       trafficRouting:
         istio:
           virtualService: 
@@ -89,19 +89,19 @@ spec:
     port: 8080
   selector:
     app: recommendation
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: recommendation-canary
-  labels:
-    version: canary
-spec:
-  ports:
-  - name: http
-    port: 8080
-  selector:
-    app: recommendation
+#---
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: recommendation-canary
+#  labels:
+#    version: canary
+#spec:
+#  ports:
+#  - name: http
+#    port: 8080
+#  selector:
+#    app: recommendation
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
@@ -129,7 +129,7 @@ spec:
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
-  name: recommendation-destrule
+  name: recommendation
 spec:
   host: recommendation
   subsets:
