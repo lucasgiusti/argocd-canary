@@ -26,7 +26,7 @@ spec:
       trafficRouting:
         istio:
           virtualService: 
-            name: recommendation-vsvc
+            name: recommendation
             routes:
             - primary # At least one route is required
           destinationRule:
