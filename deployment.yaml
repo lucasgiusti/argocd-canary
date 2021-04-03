@@ -86,7 +86,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: recommendation-stable
+  name: recommendation
 spec:
   ports:
   - name: http
@@ -94,17 +94,17 @@ spec:
   selector:
     app: recommendation
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: recommendation-canary
-spec:
-  ports:
-  - name: http
-    port: 8080
-  selector:
-    app: recommendation
----
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: recommendation
+#spec:
+#  ports:
+#  - name: http
+#    port: 8080
+#  selector:
+#    app: recommendation
+#---
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
