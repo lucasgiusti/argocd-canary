@@ -14,7 +14,7 @@ spec:
             routes:
             - primary # At least one route is required
           destinationRule:
-            name: recommendation
+            name: recommendation-destrule
             canarySubsetName: canary
             stableSubsetName: stable
       steps:
@@ -121,7 +121,7 @@ spec:
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
-  name: recommendation
+  name: recommendation-destrule
 spec:
   host: recommendation
   subsets:
