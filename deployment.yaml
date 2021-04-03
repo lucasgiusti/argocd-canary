@@ -22,8 +22,6 @@ spec:
       - setWeight: 50
       - pause:
           duration: "20s"
-      canaryService: recommendation-canary
-      stableService: recommendation-stable
       trafficRouting:
         istio:
           virtualService: 
