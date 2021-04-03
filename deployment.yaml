@@ -14,7 +14,7 @@ spec:
             routes:
             - primary # At least one route is required
           destinationRule:
-            name: recommendation-destrule
+            name: recommendation
             canarySubsetName: canary
             stableSubsetName: stable
       steps:
