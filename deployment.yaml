@@ -8,6 +8,20 @@ metadata:
 spec:
   strategy:
     canary:
+      analysis:
+        templates:
+        - templateName: success-rate
+        startingStep: 2
+        args:
+        - name: service-name
+          value: recommendation-canary.default.svc.cluster.local
+      steps:
+      - setWeight: 20
+      - pause:
+          duration: "1m"
+      - setWeight: 50
+      - pause:
+          duration: "2m"
       canaryService: recommendation-canary  # required
       stableService: recommendation  # required
       trafficRouting:
@@ -16,13 +30,6 @@ spec:
             name: recommendation
             routes:
             - primary # At least one route is required
-      steps:
-      - setWeight: 20
-      - pause:
-          duration: "20s"
-      - setWeight: 50
-      - pause:
-          duration: "20s"    
   replicas: 4
   revisionHistoryLimit: 2
   selector:
@@ -39,7 +46,7 @@ spec:
           value: -Xms15m -Xmx15m -Xmn15m
         name: recommendation
         image: quay.io/rhdevelopers/istio-tutorial-recommendation:v1
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
           name: http
@@ -94,17 +101,26 @@ spec:
     name: http
   selector:
     app: recommendation
-#---
-#apiVersion: networking.istio.io/v1alpha3
-#kind: DestinationRule
-#metadata:
-#  name: recommendation
-#spec:
-#  host: recommendation
-#  subsets:
-#  - name: canary   # referenced in canary.trafficRouting.istio.destinationRule.canarySubsetName
-#    labels:        # labels will be injected with canary rollouts-pod-template-hash value
-#      app: recommendation
-#  - name: stable   # referenced in canary.trafficRouting.istio.destinationRule.stableSubsetName
-#    labels:        # labels will be injected with canary rollouts-pod-template-hash value
-#      app: recommendation
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: success-rate
+spec:
+  args:
+  - name: service-name
+  metrics:
+  - name: success-rate
+    successCondition: result[0] >= 0.95
+    interval: 30s
+    failureLimit: 1
+    provider:
+      prometheus:
+        address: http://prometheus.istio-system.svc.cluster.local:9090
+        query: |
+          sum(irate(
+            istio_requests_total{reporter="source",destination_service=~"{{args.service-name}}",response_code!~"5.*"}[1m]
+          )) / 
+          sum(irate(
+            istio_requests_total{reporter="source",destination_service=~"{{args.service-name}}"}[1m]
+          ))
