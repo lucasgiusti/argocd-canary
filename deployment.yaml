@@ -5,6 +5,7 @@ metadata:
   name: recommendation
   labels:
     app: recommendation
+    version: v2
 spec:
   strategy:
     canary:
@@ -45,7 +46,7 @@ spec:
         - name: JAVA_OPTIONS
           value: -Xms15m -Xmx15m -Xmn15m
         name: recommendation
-        image: quay.io/rhdevelopers/istio-tutorial-recommendation:v1
+        image: quay.io/rhdevelopers/istio-tutorial-recommendation:v2
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
